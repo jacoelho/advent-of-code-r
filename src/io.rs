@@ -1,13 +1,14 @@
 use std::{io, str};
 
-pub fn read_value_per_line<T>(path: &str) -> io::Result<Vec<T>>
+pub fn read_value_per_line<T>(path: &str) -> Vec<T>
 where
     T: str::FromStr,
 {
-    Ok(std::fs::read_to_string(path)?
+    std::fs::read_to_string(path)
+        .expect("should be able to read file")
         .lines()
         .filter_map(|line| line.parse::<T>().ok())
-        .collect())
+        .collect()
 }
 
 pub fn read_value_chunks<T>(path: &str) -> io::Result<Vec<Vec<T>>>
