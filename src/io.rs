@@ -26,13 +26,13 @@ where
         .collect())
 }
 
-pub fn read_vec_per_line<T, F>(path: &str, f: F) -> io::Result<Vec<Vec<T>>>
-where
-    T: str::FromStr,
-    F: Fn(char) -> Option<T>,
-{
-    Ok(std::fs::read_to_string(path)?
-        .lines()
-        .map(|line| line.chars().map(|c| f(c).unwrap()).collect())
-        .collect())
-}
+// pub fn read_vec_per_line<T, F>(path: &str, f: F) -> io::Result<Vec<Vec<T>>>
+// where
+//     T: str::FromStr,
+//     F: Fn(char) -> Option<T>,
+// {
+//     Ok(std::fs::read_to_string(path)?
+//         .lines()
+//         .map(|line| line.chars().map(|c| f(c).unwrap()).collect())
+//         .collect())
+// }

@@ -1,12 +1,13 @@
 use crate::io;
+use crate::y2022::day02::GameResult::{Draw, Lose, Win};
 use crate::y2022::day02::Shape::{Paper, Rock, Scissors};
 use std::str::FromStr;
 
 #[derive(Debug, PartialEq)]
 enum Shape {
-    Rock,
-    Paper,
-    Scissors,
+    Rock = 1,
+    Paper = 2,
+    Scissors = 3,
 }
 
 impl FromStr for Shape {
@@ -72,9 +73,9 @@ impl FromStr for GameResult {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let result = match s {
-            "X" => Self::Lose,
-            "Y" => Self::Draw,
-            "Z" => Self::Win,
+            "X" => Lose,
+            "Y" => Draw,
+            "Z" => Win,
             _ => return Err(()),
         };
 
@@ -88,17 +89,17 @@ struct FixedScore(Shape, GameResult);
 impl FixedScore {
     fn score(&self) -> i32 {
         let r = match (&self.0, &self.1) {
-            (Rock, GameResult::Lose) => Round(Rock, Scissors),
-            (Rock, GameResult::Draw) => Round(Rock, Rock),
-            (Rock, GameResult::Win) => Round(Rock, Paper),
+            (Rock, Lose) => Round(Rock, Scissors),
+            (Rock, Draw) => Round(Rock, Rock),
+            (Rock, Win) => Round(Rock, Paper),
 
-            (Paper, GameResult::Lose) => Round(Paper, Rock),
-            (Paper, GameResult::Draw) => Round(Paper, Paper),
-            (Paper, GameResult::Win) => Round(Paper, Scissors),
+            (Paper, Lose) => Round(Paper, Rock),
+            (Paper, Draw) => Round(Paper, Paper),
+            (Paper, Win) => Round(Paper, Scissors),
 
-            (Scissors, GameResult::Lose) => Round(Scissors, Paper),
-            (Scissors, GameResult::Draw) => Round(Scissors, Scissors),
-            (Scissors, GameResult::Win) => Round(Scissors, Rock),
+            (Scissors, Lose) => Round(Scissors, Paper),
+            (Scissors, Draw) => Round(Scissors, Scissors),
+            (Scissors, Win) => Round(Scissors, Rock),
         };
         r.score()
     }
