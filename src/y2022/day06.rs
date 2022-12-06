@@ -6,8 +6,7 @@ fn find_window(window: usize, s: String) -> usize {
         .collect::<Vec<u8>>()
         .windows(window)
         .enumerate()
-        .filter(|&(_, item)| item.iter().cloned().collect::<HashSet<u8>>().len() == item.len())
-        .take(1)
+        .skip_while(|&(_, item)| item.iter().cloned().collect::<HashSet<u8>>().len() != item.len())
         .map(|(idx, _)| idx)
         .next()
         .unwrap();
