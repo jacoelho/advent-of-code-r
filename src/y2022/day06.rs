@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-fn find_window(window: usize, s: String) -> usize {
+fn find_marker(window: usize, s: String) -> usize {
     let res = s
         .bytes()
         .collect::<Vec<u8>>()
@@ -15,11 +15,11 @@ fn find_window(window: usize, s: String) -> usize {
 }
 
 fn part01(filename: &str) -> usize {
-    find_window(4, std::fs::read_to_string(filename).expect("expected file"))
+    find_marker(4, std::fs::read_to_string(filename).expect("expected file"))
 }
 
 fn part02(filename: &str) -> usize {
-    find_window(
+    find_marker(
         14,
         std::fs::read_to_string(filename).expect("expected file"),
     )
@@ -37,7 +37,7 @@ mod tests {
     #[test]
     fn part01_example_1() {
         assert_eq!(
-            find_window(4, String::from("bvwbjplbgvbhsrlpgdmjqwftvncz")),
+            find_marker(4, String::from("bvwbjplbgvbhsrlpgdmjqwftvncz")),
             5
         );
     }
@@ -45,7 +45,7 @@ mod tests {
     #[test]
     fn part01_example_2() {
         assert_eq!(
-            find_window(4, String::from("nppdvjthqldpwncqszvftbrmjlhg")),
+            find_marker(4, String::from("nppdvjthqldpwncqszvftbrmjlhg")),
             6
         );
     }
@@ -53,7 +53,7 @@ mod tests {
     #[test]
     fn part01_example_3() {
         assert_eq!(
-            find_window(4, String::from("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg")),
+            find_marker(4, String::from("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg")),
             10
         );
     }
@@ -66,7 +66,7 @@ mod tests {
     #[test]
     fn part02_example_3() {
         assert_eq!(
-            find_window(14, String::from("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg")),
+            find_marker(14, String::from("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg")),
             29
         );
     }
