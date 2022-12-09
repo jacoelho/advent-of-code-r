@@ -1,33 +1,7 @@
 use crate::io;
 use std::{collections::HashSet, str::FromStr};
 
-#[derive(Debug, PartialEq, Clone)]
-enum Move {
-    Up(i32),
-    Down(i32),
-    Left(i32),
-    Right(i32),
-}
-
-impl Move {
-    fn offset(&self) -> (i32, i32) {
-        match self {
-            Move::Up(_) => (0, 1),
-            Move::Down(_) => (0, -1),
-            Move::Left(_) => (-1, 0),
-            Move::Right(_) => (1, 0),
-        }
-    }
-
-    fn value(&self) -> i32 {
-        match *self {
-            Move::Up(v) => v,
-            Move::Down(v) => v,
-            Move::Left(v) => v,
-            Move::Right(v) => v,
-        }
-    }
-}
+struct Move(Position, i32);
 
 impl FromStr for Move {
     type Err = ();
@@ -40,10 +14,10 @@ impl FromStr for Move {
         }
 
         let res = match s {
-            i if i.starts_with('U') => Self::Up(parse_digit(s)),
-            i if i.starts_with('D') => Self::Down(parse_digit(s)),
-            i if i.starts_with('L') => Self::Left(parse_digit(s)),
-            i if i.starts_with('R') => Self::Right(parse_digit(s)),
+            i if i.starts_with('U') => Self((0, 1), parse_digit(s)),
+            i if i.starts_with('D') => Self((0, -1), parse_digit(s)),
+            i if i.starts_with('L') => Self((-1, 0), parse_digit(s)),
+            i if i.starts_with('R') => Self((1, 0), parse_digit(s)),
             _ => panic!("unreachble"),
         };
 
@@ -52,11 +26,6 @@ impl FromStr for Move {
 }
 
 type Position = (i32, i32);
-
-fn add_assign_tuple(lhs: &mut Position, rhs: Position) {
-    lhs.0 += rhs.0;
-    lhs.1 += rhs.1;
-}
 
 fn is_connected(lhs: &Position, rhs: &Position) -> bool {
     let dx = if lhs.0 > rhs.0 {
@@ -88,24 +57,21 @@ impl Rope {
         }
     }
 
-    fn follow(&mut self) {
-        for i in 1..self.knots.len() {
-            if !is_connected(&self.knots[i], &self.knots[i - 1]) {
-                let dx = self.knots[i - 1].0 - self.knots[i].0;
-                let dy = self.knots[i - 1].1 - self.knots[i].1;
-
-                self.knots[i] = (self.knots[i].0 + dx.signum(), self.knots[i].1 + dy.signum());
-            }
-        }
-    }
-
     fn motion(&mut self, m: Move) {
-        let offset = m.offset();
+        let Move(offset, count) = m;
 
-        for _ in 0..m.value() {
-            add_assign_tuple(&mut self.knots[0], offset);
+        for _ in 0..count {
+            self.knots[0].0 += offset.0;
+            self.knots[0].1 += offset.1;
 
-            self.follow();
+            for i in 1..self.knots.len() {
+                if !is_connected(&self.knots[i], &self.knots[i - 1]) {
+                    let dx = self.knots[i - 1].0 - self.knots[i].0;
+                    let dy = self.knots[i - 1].1 - self.knots[i].1;
+
+                    self.knots[i] = (self.knots[i].0 + dx.signum(), self.knots[i].1 + dy.signum());
+                }
+            }
 
             self.visited.insert(self.knots[self.knots.len() - 1]);
         }
