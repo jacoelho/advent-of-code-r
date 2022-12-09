@@ -76,38 +76,38 @@ fn is_connected(lhs: &Position, rhs: &Position) -> bool {
 
 #[derive(Debug, PartialEq)]
 struct Rope {
-    head: Position,
-    tail: Position,
+    knots: Vec<Position>,
     visited: HashSet<Position>,
 }
 
 impl Rope {
-    fn new() -> Self {
+    fn new(knots: usize) -> Self {
         Self {
-            head: (0, 0),
-            tail: (0, 0),
+            knots: vec![(0, 0); knots],
             visited: HashSet::new(),
         }
     }
 
     fn follow(&mut self) {
-        let dx = self.head.0 - self.tail.0;
-        let dy = self.head.1 - self.tail.1;
+        for i in 1..self.knots.len() {
+            if !is_connected(&self.knots[i], &self.knots[i - 1]) {
+                let dx = self.knots[i - 1].0 - self.knots[i].0;
+                let dy = self.knots[i - 1].1 - self.knots[i].1;
 
-        self.tail = (self.tail.0 + dx.signum(), self.tail.1 + dy.signum());
+                self.knots[i] = (self.knots[i].0 + dx.signum(), self.knots[i].1 + dy.signum());
+            }
+        }
     }
 
     fn motion(&mut self, m: Move) {
         let offset = m.offset();
 
         for _ in 0..m.value() {
-            add_assign_tuple(&mut self.head, offset);
+            add_assign_tuple(&mut self.knots[0], offset);
 
-            if !is_connected(&self.head, &self.tail) {
-                self.follow();
-            }
+            self.follow();
 
-            self.visited.insert(self.tail);
+            self.visited.insert(self.knots[self.knots.len() - 1]);
         }
     }
 }
@@ -116,7 +116,19 @@ fn part01(filename: &str) -> usize {
     let foo = io::read_value_per_line::<Move>(filename);
 
     foo.into_iter()
-        .fold(Rope::new(), |mut r, m| {
+        .fold(Rope::new(2), |mut r, m| {
+            r.motion(m);
+            r
+        })
+        .visited
+        .len()
+}
+
+fn part02(filename: &str) -> usize {
+    let foo = io::read_value_per_line::<Move>(filename);
+
+    foo.into_iter()
+        .fold(Rope::new(10), |mut r, m| {
             r.motion(m);
             r
         })
@@ -136,5 +148,15 @@ mod tests {
     #[test]
     fn part01_input() {
         assert_eq!(part01("data/y2022/day09.txt"), 6269);
+    }
+
+    #[test]
+    fn part02_example() {
+        assert_eq!(part02("data/y2022/day09-example.txt"), 1);
+    }
+
+    #[test]
+    fn part02_input() {
+        assert_eq!(part02("data/y2022/day09.txt"), 2557);
     }
 }
