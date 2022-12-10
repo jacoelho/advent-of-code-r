@@ -25,36 +25,54 @@ impl FromStr for Instruction {
     }
 }
 
+fn cycle_values(instructions: Vec<Instruction>) -> Vec<i32> {
+    instructions.into_iter().fold(vec![1], |mut values, i| {
+        let x = values[values.len() - 1];
+
+        match i {
+            Instruction::Noop => {
+                values.push(x);
+                values
+            }
+            Instruction::Addx(v) => {
+                values.push(x);
+                values.push(x + v);
+
+                values
+            }
+        }
+    })
+}
+
 fn part01(filename: &str) -> i32 {
-    let foo = io::read_value_per_line::<Instruction>(filename)
-        .into_iter()
-        .flat_map(|i| match i {
-            Instruction::Noop => vec![i],
-            Instruction::Addx(_) => vec![Instruction::Addx(0), i],
-        })
-        .collect::<Vec<Instruction>>();
+    let register_x = cycle_values(io::read_value_per_line::<Instruction>(filename));
 
-    let mut strenghts: Vec<i32> = Vec::new();
-    let mut register_x = 1;
-
-    for cycle in 1..221 {
-        let instruction = &foo[cycle];
-
-        println!("{} {}", cycle, register_x);
-
-        match cycle {
-            20 | 60 | 100 | 140 | 180 | 220 => strenghts.push(cycle as i32 * register_x),
-            _ => {}
-        }
-
-        if let Instruction::Addx(v) = instruction {
-            register_x += v
-        }
+    let mut sum = 0;
+    for cycle in [20, 60, 100, 140, 180, 220].iter() {
+        sum += register_x[cycle - 1] * *cycle as i32;
     }
 
-    println!("{:?}", strenghts);
+    sum
+}
 
-    strenghts.iter().sum()
+fn part02(filename: &str) {
+    let register_x = cycle_values(io::read_value_per_line::<Instruction>(filename));
+
+    let pixels = (0..241)
+        .map(|cycle| {
+            let x = register_x[cycle];
+
+            if (x - (cycle as i32 % 40)).abs() <= 1 {
+                '#'
+            } else {
+                '.'
+            }
+        })
+        .collect::<Vec<char>>();
+
+    for line in pixels.chunks(40) {
+        println!("{}", line.iter().collect::<String>());
+    }
 }
 
 #[cfg(test)]
@@ -78,6 +96,6 @@ mod tests {
 
     #[test]
     fn part02_input() {
-        part02("data/y2022/day10.txt");
+        part02("data/y2022/day10.txt"); // PLULKBZH
     }
 }
