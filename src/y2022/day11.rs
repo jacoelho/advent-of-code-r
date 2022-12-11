@@ -21,6 +21,7 @@ struct Monkey {
     test_value: u64,
     on_true_monkey: usize,
     on_false_monkey: usize,
+    inpections: usize,
 }
 
 fn parse_input(path: &str) -> Vec<Monkey> {
@@ -79,6 +80,7 @@ fn parse_input(path: &str) -> Vec<Monkey> {
             test_value,
             on_true_monkey,
             on_false_monkey,
+            inpections: 0,
         };
 
         monkeys.push(m);
@@ -87,13 +89,11 @@ fn parse_input(path: &str) -> Vec<Monkey> {
     monkeys
 }
 
-fn round(relief: bool, monkeys: &mut [Monkey], inpections: &mut [usize]) {
-    let prod: u64 = monkeys.iter().map(|m| m.test_value).product();
-
+fn round<F: Fn(u64) -> u64>(worry: F, monkeys: &mut [Monkey]) {
     for i in 0..monkeys.len() {
         let m = monkeys[i].clone();
 
-        inpections[i] += m.items.len();
+        monkeys[i].inpections += m.items.len();
         monkeys[i].items.truncate(0);
 
         for i in 0..m.items.len() {
@@ -106,7 +106,7 @@ fn round(relief: bool, monkeys: &mut [Monkey], inpections: &mut [usize]) {
                 (Operator::Multiply, Rhs::Old) => item * item,
             };
 
-            let item = if relief { item / 3 } else { item };
+            let item = worry(item);
 
             let target_monkey = if item % m.test_value == 0 {
                 m.on_true_monkey
@@ -114,18 +114,19 @@ fn round(relief: bool, monkeys: &mut [Monkey], inpections: &mut [usize]) {
                 m.on_false_monkey
             };
 
-            monkeys[target_monkey].items.push(item % prod);
+            monkeys[target_monkey].items.push(item);
         }
     }
 }
 
 fn part01(path: &str) -> usize {
     let mut monkeys = parse_input(path);
-    let mut inpections = vec![0; monkeys.len()];
 
     for _ in 0..20 {
-        round(true, &mut monkeys, &mut inpections);
+        round(|w| w / 3, &mut monkeys);
     }
+
+    let mut inpections = monkeys.iter().map(|m| m.inpections).collect::<Vec<_>>();
 
     inpections.sort_by_key(|el| cmp::Reverse(*el));
 
@@ -134,11 +135,16 @@ fn part01(path: &str) -> usize {
 
 fn part02(path: &str) -> usize {
     let mut monkeys = parse_input(path);
-    let mut inpections = vec![0; monkeys.len()];
+
+    let prod: u64 = monkeys.iter().map(|m| m.test_value).product();
+
+    let worry = |v: u64| v % prod;
 
     for _ in 0..10_000 {
-        round(false, &mut monkeys, &mut inpections);
+        round(worry, &mut monkeys);
     }
+
+    let mut inpections = monkeys.iter().map(|m| m.inpections).collect::<Vec<_>>();
 
     inpections.sort_by_key(|el| cmp::Reverse(*el));
 
@@ -161,11 +167,11 @@ mod tests {
 
     #[test]
     fn part02_example() {
-        assert_eq!(part02("data/y2022/day11-example.txt"), 2713310158);
+        assert_eq!(part02("data/y2022/day11-example.txt"), 2_713_310_158);
     }
 
     #[test]
     fn part02_input() {
-        assert_eq!(part02("data/y2022/day11.txt"), 20683044837);
+        assert_eq!(part02("data/y2022/day11.txt"), 20_683_044_837);
     }
 }
