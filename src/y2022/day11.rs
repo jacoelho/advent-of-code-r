@@ -1,4 +1,4 @@
-use std::cmp;
+use std::{cmp, str::FromStr};
 
 use crate::io;
 
@@ -8,6 +8,24 @@ enum Operation {
     AddSelf,
     Multiply(u64),
     MultiplySelf,
+}
+
+impl FromStr for Operation {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let (op, v) = s.split_once(' ').unwrap();
+
+        let operation = match (op, v) {
+            ("*", "old") => Operation::MultiplySelf,
+            ("*", v) => Operation::Multiply(v.parse::<u64>().unwrap()),
+            ("+", "old") => Operation::AddSelf,
+            ("+", v) => Operation::Add(v.parse::<u64>().unwrap()),
+            _ => panic!("unreachable"),
+        };
+
+        Ok(operation)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -34,20 +52,12 @@ fn parse_input(path: &str) -> Vec<Monkey> {
             .filter_map(|v| v.parse::<u64>().ok())
             .collect::<Vec<_>>();
 
-        let operation_values = line[2]
+        let operation = line[2]
             .trim_start()
             .strip_prefix("Operation: new = old ")
             .unwrap()
-            .split(' ')
-            .collect::<Vec<&str>>();
-
-        let operation = match operation_values[..] {
-            ["*", "old"] => Operation::MultiplySelf,
-            ["*", v] => Operation::Multiply(v.parse::<u64>().unwrap()),
-            ["+", "old"] => Operation::AddSelf,
-            ["+", v] => Operation::Add(v.parse::<u64>().unwrap()),
-            _ => panic!("unreachable"),
-        };
+            .parse::<Operation>()
+            .unwrap();
 
         let test_value = line[3]
             .trim_start()
