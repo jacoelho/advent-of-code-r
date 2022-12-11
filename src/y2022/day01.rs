@@ -2,7 +2,7 @@ use crate::io;
 use std::collections::BinaryHeap;
 
 pub fn part01(path: &str) -> Result<i32, std::io::Error> {
-    let calories: Vec<Vec<i32>> = io::read_value_chunks(path)?;
+    let calories: Vec<Vec<i32>> = io::read_value_chunks(path);
 
     Ok(calories
         .iter()
@@ -12,7 +12,7 @@ pub fn part01(path: &str) -> Result<i32, std::io::Error> {
 }
 
 pub fn part02(path: &str) -> Result<i32, std::io::Error> {
-    let mut calories: BinaryHeap<_> = io::read_value_chunks(path)?
+    let mut calories: BinaryHeap<_> = io::read_value_chunks(path)
         .iter()
         .map(|elf_calories| elf_calories.iter().sum::<i32>())
         .collect();

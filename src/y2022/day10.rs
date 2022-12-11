@@ -58,7 +58,7 @@ fn part01(filename: &str) -> i32 {
 fn part02(filename: &str) {
     let register_x = cycle_values(io::read_value_per_line::<Instruction>(filename));
 
-    let pixels = (0..241)
+    let crt = (0..=240)
         .map(|cycle| {
             let x = register_x[cycle];
 
@@ -70,7 +70,7 @@ fn part02(filename: &str) {
         })
         .collect::<Vec<char>>();
 
-    for line in pixels.chunks(40) {
+    for line in crt.chunks(40) {
         println!("{}", line.iter().collect::<String>());
     }
 }
@@ -90,12 +90,14 @@ mod tests {
     }
 
     #[test]
+    #[ignore]
     fn part02_example() {
         part02("data/y2022/day10-example.txt");
     }
 
     #[test]
+    #[ignore = "PLULKBZH"]
     fn part02_input() {
-        part02("data/y2022/day10.txt"); // PLULKBZH
+        part02("data/y2022/day10.txt");
     }
 }

@@ -1,4 +1,4 @@
-use std::{io, str};
+use std::str;
 
 pub fn read_value_per_line<T>(path: &str) -> Vec<T>
 where
@@ -11,11 +11,12 @@ where
         .collect()
 }
 
-pub fn read_value_chunks<T>(path: &str) -> io::Result<Vec<Vec<T>>>
+pub fn read_value_chunks<T>(path: &str) -> Vec<Vec<T>>
 where
     T: str::FromStr,
 {
-    Ok(std::fs::read_to_string(path)?
+    std::fs::read_to_string(path)
+        .expect("expected file")
         .split("\n\n")
         .map(|chunk| {
             chunk
@@ -23,7 +24,7 @@ where
                 .filter_map(|line| line.parse::<T>().ok())
                 .collect()
         })
-        .collect())
+        .collect()
 }
 
 // pub fn read_vec_per_line<T, F>(path: &str, f: F) -> io::Result<Vec<Vec<T>>>
