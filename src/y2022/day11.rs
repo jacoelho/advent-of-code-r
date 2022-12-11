@@ -3,21 +3,17 @@ use std::cmp;
 use crate::io;
 
 #[derive(Debug, Clone, Copy)]
-enum Operator {
-    Add,
-    Multiply,
-}
-
-#[derive(Debug, Clone, Copy)]
-enum Rhs {
-    Static(u64),
-    Old,
+enum Operation {
+    Add(u64),
+    AddSelf,
+    Multiply(u64),
+    MultiplySelf,
 }
 
 #[derive(Debug, Clone)]
 struct Monkey {
     items: Vec<u64>,
-    operation: (Operator, Rhs),
+    operation: Operation,
     test_value: u64,
     on_true_monkey: usize,
     on_false_monkey: usize,
@@ -46,10 +42,10 @@ fn parse_input(path: &str) -> Vec<Monkey> {
             .collect::<Vec<&str>>();
 
         let operation = match operation_values[..] {
-            ["*", "old"] => (Operator::Multiply, Rhs::Old),
-            ["*", v] => (Operator::Multiply, Rhs::Static(v.parse::<u64>().unwrap())),
-            ["+", "old"] => (Operator::Add, Rhs::Old),
-            ["+", v] => (Operator::Add, Rhs::Static(v.parse::<u64>().unwrap())),
+            ["*", "old"] => Operation::MultiplySelf,
+            ["*", v] => Operation::Multiply(v.parse::<u64>().unwrap()),
+            ["+", "old"] => Operation::AddSelf,
+            ["+", v] => Operation::Add(v.parse::<u64>().unwrap()),
             _ => panic!("unreachable"),
         };
 
@@ -89,7 +85,7 @@ fn parse_input(path: &str) -> Vec<Monkey> {
     monkeys
 }
 
-fn round<F: Fn(u64) -> u64>(worry: F, monkeys: &mut [Monkey]) {
+fn round<F: Fn(u64) -> u64>(worry_level: F, monkeys: &mut [Monkey]) {
     for i in 0..monkeys.len() {
         let m = monkeys[i].clone();
 
@@ -100,13 +96,13 @@ fn round<F: Fn(u64) -> u64>(worry: F, monkeys: &mut [Monkey]) {
             let item = m.items[i];
 
             let item = match m.operation {
-                (Operator::Add, Rhs::Static(v)) => item + v,
-                (Operator::Add, Rhs::Old) => item + item,
-                (Operator::Multiply, Rhs::Static(v)) => item * v,
-                (Operator::Multiply, Rhs::Old) => item * item,
+                Operation::Add(v) => item + v,
+                Operation::AddSelf => item + item,
+                Operation::Multiply(v) => item * v,
+                Operation::MultiplySelf => item * item,
             };
 
-            let item = worry(item);
+            let item = worry_level(item);
 
             let target_monkey = if item % m.test_value == 0 {
                 m.on_true_monkey
