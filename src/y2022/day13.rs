@@ -67,8 +67,13 @@ fn part01(path: &str) -> usize {
     io::read_value_chunks::<Packet>(path)
         .iter()
         .enumerate()
-        .filter(|(_, pair)| pair[0] <= pair[1])
-        .map(|(i, _)| i + 1)
+        .filter_map(|(i, pair)| {
+            if pair[0] <= pair[1] {
+                Some(i + 1)
+            } else {
+                None
+            }
+        })
         .sum()
 }
 
