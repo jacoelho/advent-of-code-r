@@ -29,10 +29,6 @@ impl FromStr for Packet {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "[]" {
-            return Ok(Self::List(vec![]));
-        }
-
         let p = if s.starts_with('[') {
             let s = &s[1..(s.len() - 1)];
 
@@ -57,6 +53,8 @@ impl FromStr for Packet {
                     .filter_map(|idx| s[idx[0]..idx[1] - 1].parse().ok())
                     .collect::<Vec<_>>(),
             )
+        } else if s.is_empty() {
+            Self::List(vec![])
         } else {
             Self::Integer(s.parse().unwrap())
         };
