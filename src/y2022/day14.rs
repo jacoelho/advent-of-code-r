@@ -1,22 +1,10 @@
 use std::collections::HashMap;
-use std::fmt::{write, Display, Formatter, Write};
 use std::hash::Hash;
 
 #[derive(PartialEq)]
 enum Particle {
-    Air,
     Rock,
     Sand,
-}
-
-impl Display for Particle {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Air => f.write_char('.'),
-            Self::Rock => f.write_char('#'),
-            Self::Sand => f.write_char('o'),
-        }
-    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -86,28 +74,6 @@ fn parse_input(path: &str) -> HashMap<Position2D, Particle> {
                 .collect::<Vec<_>>()
         })
         .collect::<HashMap<_, _>>()
-}
-
-fn print_grid(g: &HashMap<Position2D, Particle>) {
-    let x = g.keys().map(|p| p.x).collect::<Vec<_>>();
-    let y = g.keys().map(|p| p.y).collect::<Vec<_>>();
-    let min_x = *x.iter().min().unwrap();
-    let max_x = *x.iter().max().unwrap();
-    let min_y = *y.iter().min().unwrap();
-    let max_y = *y.iter().max().unwrap();
-
-    for y in min_y..=max_y {
-        print!("{} ", y);
-        for x in min_x..=max_x {
-            print!(
-                "{}",
-                g.get(&Position2D::new(x, y)).unwrap_or(&Particle::Air)
-            );
-        }
-        println!();
-    }
-
-    println!();
 }
 
 fn simulate(
