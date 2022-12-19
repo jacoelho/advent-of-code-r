@@ -191,22 +191,21 @@ fn part02(path: &str) -> i64 {
         let state = (chamber.top(), chamber.piece_count, chamber.jet_count);
 
         if let Some(entry) = seen.get(&state) {
-            let delta_height = chamber.height - entry.0;
-            let delta_drops = drop_count - (entry.1 as i64);
+            let height_per_loop = chamber.height - entry.0;
+            let drops_per_loop = drop_count - (entry.1 as i64);
 
             let remaining_drops = 1000000000000_i64 - (entry.1 as i64);
 
-            let needed_drops = remaining_drops / delta_drops;
-            let leftover_drops = remaining_drops % delta_drops;
-            let integral_height = entry.0 + delta_height * (needed_drops as i64);
+            let loops = remaining_drops / drops_per_loop;
+            let remaining_drops = remaining_drops % drops_per_loop;
 
-            for _ in 0..leftover_drops {
+            for _ in 0..remaining_drops {
                 chamber.drop_piece();
             }
 
-            let leftover_height = chamber.height - height;
+            let height_loops = entry.0 + height_per_loop * (loops as i64);
 
-            return integral_height + leftover_height;
+            return height_loops + chamber.height - height;
         } else {
             seen.insert(state, (chamber.height, drop_count));
         }
