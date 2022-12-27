@@ -1,0 +1,12 @@
+{
+    "[rust]": {
+        "editor.formatOnSave": true
+    },
+    "files.watcherExclude": {
+        "**/target/**": true,
+        "**/.stack-work/**": true
+    },
+    "rust-analyzer.checkOnSave.command": "clippy",
+    "rust-analyzer.imports.granularity.group": "module",
+    "rust-analyzer.imports.prefix": "crate"
+}

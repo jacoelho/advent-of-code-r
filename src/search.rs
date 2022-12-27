@@ -1,5 +1,7 @@
-use std::collections::HashSet;
-use std::{collections::BinaryHeap, hash::Hash};
+use std::{
+    collections::{BinaryHeap, HashSet},
+    hash::Hash,
+};
 
 struct MinHeapContainer<T> {
     cost: usize,
