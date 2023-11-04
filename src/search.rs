@@ -28,7 +28,11 @@ impl<T> Ord for MinHeapContainer<T> {
     }
 }
 
-pub fn shortest_path<T, G, N>(start: T, goal: G, neighbours: N) -> Option<usize>
+pub fn shortest_path<T, G, N>(
+    start: T,
+    goal: G,
+    neighbours: N,
+) -> Option<usize>
 where
     T: Eq + Hash + Copy,
     G: Fn(T) -> bool,
@@ -39,10 +43,7 @@ where
 
     visited.insert(start);
 
-    frontier.push(MinHeapContainer {
-        cost: 0,
-        value: start,
-    });
+    frontier.push(MinHeapContainer { cost: 0, value: start });
 
     while let Some(MinHeapContainer { cost, value }) = frontier.pop() {
         if goal(value) {
@@ -54,10 +55,7 @@ where
         for el in neighbours(value) {
             if !visited.contains(&el) {
                 visited.insert(el);
-                frontier.push(MinHeapContainer {
-                    cost: new_cost,
-                    value: el,
-                })
+                frontier.push(MinHeapContainer { cost: new_cost, value: el });
             }
         }
     }
