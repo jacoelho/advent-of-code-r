@@ -91,18 +91,15 @@ mod tests {
         let input = vec![1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50];
         let mut computer = IntCode::new(&input);
 
-        computer.step();
+        let memory = vec![
+            vec![1, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50],
+            vec![3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50],
+        ];
 
-        assert_eq!(
-            computer.memory,
-            vec![1, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50]
-        );
+        for m in memory {
+            computer.step();
 
-        computer.step();
-
-        assert_eq!(
-            computer.memory,
-            vec![3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50]
-        );
+            assert_eq!(computer.memory, m);
+        }
     }
 }
