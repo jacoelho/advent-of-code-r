@@ -1,0 +1,32 @@
+{
+  "name": "codespace rust",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "settings": {
+      "editor.formatOnSave": true,
+      "terminal.integrated.shell.linux": "/usr/bin/zsh",
+      "lldb.executable": "/usr/bin/lldb",
+      // VS Code don't watch files under ./target
+      "files.watcherExclude": {
+        "**/target/**": true
+      },
+      "rust-analyzer.checkOnSave.command": "clippy",
+      "rust-analyzer.check.extraArgs": [
+        "--",
+        "-Wclippy::pedantic",
+        "-Wclippy::nursery",
+        "-Wclippy::unwrap_used"
+      ],
+      "editor.minimap.enabled": false
+    },
+    "extensions": [
+      "vadimcn.vscode-lldb",
+      "matklad.rust-analyzer",
+      "tamasfe.even-better-toml",
+      "serayuzgur.crates"
+    ]
+  },
+  "remoteUser": "vscode"
+}

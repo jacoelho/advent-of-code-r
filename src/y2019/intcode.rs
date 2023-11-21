@@ -1,6 +1,8 @@
 enum Operation {
     Add,
     Multiply,
+    Input,
+    Output,
     Halt,
 }
 
@@ -11,8 +13,27 @@ impl TryFrom<i32> for Operation {
         match n {
             1 => Ok(Self::Add),
             2 => Ok(Self::Multiply),
+            3 => Ok(Self::Input),
+            4 => Ok(Self::Output),
             99 => Ok(Self::Halt),
             _ => Err(format!("unknown opcode: {n}")),
+        }
+    }
+}
+
+enum ParameterMode {
+    Position,
+    Immediate,
+}
+
+impl TryFrom<i32> for ParameterMode {
+    type Error = String;
+
+    fn try_from(n: i32) -> Result<Self, Self::Error> {
+        match n {
+            1 => Ok(Self::Position),
+            2 => Ok(Self::Immediate),
+            _ => Err(format!("unknown parameter mode: {n}")),
         }
     }
 }
