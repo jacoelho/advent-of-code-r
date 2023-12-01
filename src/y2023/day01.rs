@@ -1,13 +1,15 @@
-struct Slide<'a> {
+struct Windows<'a> {
     curr: usize,
     data: &'a str,
 }
 
-const fn slide_iter(s: &str) -> Slide {
-    Slide { curr: 0, data: s }
+impl<'a> Windows<'a> {
+    const fn new(s: &'a str) -> Self {
+        Self { curr: 0, data: s }
+    }
 }
 
-impl<'a> Iterator for Slide<'a> {
+impl<'a> Iterator for Windows<'a> {
     type Item = &'a str;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -23,6 +25,7 @@ impl<'a> Iterator for Slide<'a> {
 }
 
 struct Calibration<'a>(&'a str, i32);
+
 fn calibration_value(calibration: &[Calibration], v: &str) -> Option<i32> {
     calibration.iter().find(|Calibration(s, _)| v.starts_with(s)).map(|c| c.1)
 }
@@ -32,7 +35,7 @@ fn calibrate(calibration: &[Calibration], path: &str) -> i32 {
         .expect("expected file")
         .lines()
         .map(|line| {
-            slide_iter(line)
+            Windows::new(line)
                 .filter_map(|line| calibration_value(calibration, line))
                 .collect::<Vec<_>>()
         })
