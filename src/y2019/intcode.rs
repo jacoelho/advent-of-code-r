@@ -78,6 +78,8 @@ impl IntCode {
             .expect("expected valid opcode");
 
         match op {
+            Operation::Input => {}
+            Operation::Output => {}
             Operation::Add => {
                 let left = self.arg(1);
                 let right = self.arg(2);

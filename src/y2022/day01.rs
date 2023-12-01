@@ -33,7 +33,7 @@ mod tests {
 
     #[test]
     fn part01_example() {
-        assert_eq!(part01("data/y2022/day01-example.txt").unwrap(), 24_000);
+        assert_eq!(part01("data/y2022/day01-example1.txt").unwrap(), 24_000);
     }
 
     #[test]
@@ -43,7 +43,7 @@ mod tests {
 
     #[test]
     fn part02_example() {
-        assert_eq!(part02("data/y2022/day01-example.txt").unwrap(), 45_000);
+        assert_eq!(part02("data/y2022/day01-example1.txt").unwrap(), 45_000);
     }
 
     #[test]
