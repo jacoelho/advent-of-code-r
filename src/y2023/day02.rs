@@ -1,4 +1,5 @@
 use crate::io;
+use std::cmp;
 use std::collections::HashMap;
 use std::str::FromStr;
 
@@ -91,9 +92,7 @@ fn part02(path: &str) -> u32 {
         .map(|game| {
             game.1.iter().flatten().fold(HashMap::new(), |mut map, cube| {
                 map.entry(cube.to_index())
-                    .and_modify(|e| {
-                        *e = if *e > cube.value() { *e } else { cube.value() }
-                    })
+                    .and_modify(|e| *e = cmp::max(*e, cube.value()))
                     .or_insert_with(|| cube.value());
 
                 map
@@ -110,12 +109,12 @@ mod tests {
     #[test]
     fn parse_game_example() {
         assert_eq!(
-            "Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red".parse::<Game>().unwrap(),
-            Game(4, vec![
+            "Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red".parse::<Game>(),
+            Ok(Game(4, vec![
                 vec![Cube::Green(1), Cube::Red(3), Cube::Blue(6)],
                 vec![Cube::Green(3), Cube::Red(6)],
                 vec![Cube::Green(3), Cube::Blue(15), Cube::Red(14)]])
-        );
+        ));
     }
 
     #[test]
