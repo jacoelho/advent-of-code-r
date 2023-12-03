@@ -1,3 +1,4 @@
+mod convert;
 mod grid;
 mod io;
 mod search;

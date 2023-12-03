@@ -29,6 +29,25 @@ impl Position2D {
             .filter(|p| p.x >= 0 && p.y >= 0)
             .collect::<Vec<_>>()
     }
+
+    pub fn neighbours8(&self) -> Vec<Self> {
+        let neighbours: Vec<Self> = vec![
+            Self::new(-1, -1),
+            Self::new(0, -1),
+            Self::new(1, -1),
+            Self::new(-1, 0),
+            Self::new(1, 0),
+            Self::new(-1, 1),
+            Self::new(0, 1),
+            Self::new(1, 1),
+        ];
+
+        neighbours
+            .into_iter()
+            .map(|n| n + *self)
+            .filter(|p| p.x >= 0 && p.y >= 0)
+            .collect::<Vec<_>>()
+    }
 }
 
 impl fmt::Debug for Position2D {
