@@ -10,7 +10,7 @@ enum Schematic {
 
 fn parse_input(
     path: &str,
-) -> (Vec<(u32, Vec<Position2D>)>, Vec<(Position2D, Schematic)>) {
+) -> (Vec<(u32, Vec<Position2D>)>, Vec<(Schematic, Position2D)>) {
     let lines = std::fs::read_to_string(path)
         .expect("expected file")
         .lines()
@@ -40,7 +40,7 @@ fn parse_input(
 
             match schematic {
                 Schematic::Symbol(_) => {
-                    symbols.push((pos, schematic));
+                    symbols.push((schematic, pos));
                 }
                 Schematic::Digit(v) => {
                     number.push(v);
@@ -73,20 +73,20 @@ fn part01(path: &str) -> u32 {
     let (parts, symbols) = parse_input(path);
 
     let symbols =
-        symbols.iter().map(|&(pos, _)| pos).collect::<HashSet<Position2D>>();
+        symbols.iter().map(|&(_, pos)| pos).collect::<HashSet<Position2D>>();
 
     parts
         .iter()
-        .filter_map(|(key, val)| {
-            if val
+        .filter_map(|(part, positions)| {
+            let neighbours = positions
                 .iter()
                 .flat_map(Position2D::neighbours8)
-                .collect::<HashSet<Position2D>>()
-                .is_disjoint(&symbols)
-            {
+                .collect::<HashSet<Position2D>>();
+
+            if neighbours.is_disjoint(&symbols) {
                 None
             } else {
-                Some(key)
+                Some(*part)
             }
         })
         .sum()
@@ -97,7 +97,7 @@ fn part02(path: &str) -> u32 {
 
     let symbols = symbols
         .iter()
-        .filter_map(|(pos, schematic)| match schematic {
+        .filter_map(|(schematic, pos)| match schematic {
             Schematic::Symbol(v) if *v == '*' => Some(*pos),
             _ => None,
         })
