@@ -17,7 +17,7 @@ fn parse_input(
     let mut parts = Vec::new();
     let mut symbols = Vec::new();
 
-    let mut number = Vec::new();
+    let mut number = 0;
     let mut positions = Vec::new();
 
     for (y, line) in content.lines().enumerate() {
@@ -38,29 +38,27 @@ fn parse_input(
 
             match schematic {
                 Schematic::Symbol(_) | Schematic::Gear => {
-                    symbols.push((schematic, pos))
+                    symbols.push((schematic, pos));
                 }
                 Schematic::Digit(v) => {
-                    number.push(v);
+                    number = number * 10 + v;
                     positions.push(pos);
                     continue;
                 }
                 Schematic::Empty => {}
             }
 
-            if !number.is_empty() {
-                let part = number.iter().fold(0, |acc, i| acc * 10 + i);
-                parts.push((part, positions.clone()));
-                number = Vec::new();
-                positions = Vec::new();
+            if !positions.is_empty() {
+                parts.push((number, positions.clone()));
+                number = 0;
+                positions.clear();
             }
         }
 
-        if !number.is_empty() {
-            let part = number.iter().fold(0, |acc, i| acc * 10 + i);
-            parts.push((part, positions.clone()));
-            number = Vec::new();
-            positions = Vec::new();
+        if !positions.is_empty() {
+            parts.push((number, positions.clone()));
+            number = 0;
+            positions.clear();
         }
     }
 
