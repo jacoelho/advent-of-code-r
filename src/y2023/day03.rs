@@ -1,29 +1,18 @@
 use crate::grid::Position2D;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 #[derive(PartialEq, Debug)]
 enum Schematic {
     Symbol(char),
     Digit(u32),
+    Gear,
     Empty,
 }
 
 fn parse_input(
     path: &str,
 ) -> (Vec<(u32, Vec<Position2D>)>, Vec<(Schematic, Position2D)>) {
-    let lines = std::fs::read_to_string(path)
-        .expect("expected file")
-        .lines()
-        .map(|line| {
-            line.chars()
-                .filter_map(|ch| match ch {
-                    '.' => Some(Schematic::Empty),
-                    '0'..='9' => ch.to_digit(10).map(Schematic::Digit),
-                    _ => Some(Schematic::Symbol(ch)),
-                })
-                .collect::<Vec<_>>()
-        })
-        .collect::<Vec<_>>();
+    let content = std::fs::read_to_string(path).expect("expected file");
 
     let mut parts = Vec::new();
     let mut symbols = Vec::new();
@@ -31,16 +20,25 @@ fn parse_input(
     let mut number = Vec::new();
     let mut positions = Vec::new();
 
-    for (y, line) in lines.into_iter().enumerate() {
-        for (x, schematic) in line.into_iter().enumerate() {
+    for (y, line) in content.lines().enumerate() {
+        for (x, ch) in line.chars().enumerate() {
             let pos = Position2D {
                 x: x.try_into().expect("expect try_into to work"),
                 y: y.try_into().expect("expect try_into to work"),
             };
 
+            let schematic = match ch {
+                '0'..='9' => {
+                    Schematic::Digit(ch.to_digit(10).expect("should work"))
+                }
+                '*' => Schematic::Gear,
+                '.' => Schematic::Empty,
+                _ => Schematic::Symbol(ch),
+            };
+
             match schematic {
-                Schematic::Symbol(_) => {
-                    symbols.push((schematic, pos));
+                Schematic::Symbol(_) | Schematic::Gear => {
+                    symbols.push((schematic, pos))
                 }
                 Schematic::Digit(v) => {
                     number.push(v);
@@ -98,7 +96,7 @@ fn part02(path: &str) -> u32 {
     let symbols = symbols
         .iter()
         .filter_map(|(schematic, pos)| match schematic {
-            Schematic::Symbol(v) if *v == '*' => Some(*pos),
+            Schematic::Gear => Some(*pos),
             _ => None,
         })
         .collect::<HashSet<Position2D>>();
