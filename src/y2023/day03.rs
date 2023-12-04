@@ -27,26 +27,17 @@ fn parse_input(
                 y: y.try_into().expect("expect try_into to work"),
             };
 
-            let schematic = match ch {
+            match ch {
+                '.' => {}
                 '0'..='9' => {
-                    Schematic::Digit(ch.to_digit(10).expect("should work"))
-                }
-                '*' => Schematic::Gear,
-                '.' => Schematic::Empty,
-                _ => Schematic::Symbol(ch),
-            };
-
-            match schematic {
-                Schematic::Symbol(_) | Schematic::Gear => {
-                    symbols.push((schematic, pos));
-                }
-                Schematic::Digit(v) => {
-                    number = number * 10 + v;
+                    number =
+                        number * 10 + ch.to_digit(10).expect("is a digit");
                     positions.push(pos);
                     continue;
                 }
-                Schematic::Empty => {}
-            }
+                '*' => symbols.push((Schematic::Gear, pos)),
+                _ => symbols.push((Schematic::Symbol(ch), pos)),
+            };
 
             if !positions.is_empty() {
                 parts.push((number, positions.clone()));
@@ -93,9 +84,12 @@ fn part02(path: &str) -> u32 {
 
     let symbols = symbols
         .iter()
-        .filter_map(|(schematic, pos)| match schematic {
-            Schematic::Gear => Some(*pos),
-            _ => None,
+        .filter_map(|(schematic, pos)| {
+            if matches!(schematic, Schematic::Gear) {
+                Some(*pos)
+            } else {
+                None
+            }
         })
         .collect::<HashSet<Position2D>>();
 

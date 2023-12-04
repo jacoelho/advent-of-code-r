@@ -24,9 +24,15 @@ impl Position2D {
         ];
 
         neighbours
-            .into_iter()
-            .map(|n| n + *self)
-            .filter(|p| p.x >= 0 && p.y >= 0)
+            .iter()
+            .filter_map(|n| {
+                let p = *n + *self;
+                if p.x >= 0 && p.y >= 0 {
+                    Some(p)
+                } else {
+                    None
+                }
+            })
             .collect::<Vec<_>>()
     }
 
@@ -43,9 +49,15 @@ impl Position2D {
         ];
 
         neighbours
-            .into_iter()
-            .map(|n| n + *self)
-            .filter(|p| p.x >= 0 && p.y >= 0)
+            .iter()
+            .filter_map(|n| {
+                let p = *n + *self;
+                if p.x >= 0 && p.y >= 0 {
+                    Some(p)
+                } else {
+                    None
+                }
+            })
             .collect::<Vec<_>>()
     }
 }
