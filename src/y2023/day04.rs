@@ -1,5 +1,4 @@
 use crate::io;
-use std::cmp::min;
 use std::collections::HashSet;
 use std::str::FromStr;
 
