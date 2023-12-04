@@ -59,10 +59,8 @@ fn part02(path: &str) -> i32 {
         .iter()
         .enumerate()
         .fold(vec![1; scratch_cards.len()], |mut count, (idx, card)| {
-            let matches = card.matched_count;
-
-            for x in idx + 1..min(idx + 1 + matches, count.len()) {
-                count[x] += count[idx];
+            for i in 1..=card.matched_count {
+                count[idx + i] += count[idx];
             }
 
             count
