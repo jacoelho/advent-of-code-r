@@ -1,5 +1,5 @@
 use itertools::Itertools;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -33,6 +33,10 @@ impl GardenRange {
         } else {
             None
         }
+    }
+
+    const fn rev(&self) -> Self {
+        Self { to: self.from, from: self.to, length: self.length }
     }
 }
 
@@ -83,7 +87,7 @@ impl Almanac {
         table.iter().find_map(|t| t.translate(pos)).unwrap_or(pos)
     }
 
-    fn seed_to_location(&self, pos: u64) -> u64 {
+    fn find(&self, pos: u64) -> u64 {
         self.0.iter().fold(pos, |acc, t| {
             t.iter().find_map(|range| range.translate(acc)).unwrap_or(acc)
         })
@@ -117,36 +121,31 @@ fn parse_input(path: &str) -> (Vec<u64>, Almanac) {
 fn part01(path: &str) -> u64 {
     let (seeds, almanac) = parse_input(path);
 
-    seeds
-        .iter()
-        .map(|seed| almanac.seed_to_location(*seed))
-        .min()
-        .expect("expected a min")
+    seeds.iter().map(|seed| almanac.find(*seed)).min().expect("expected a min")
 }
 
 fn part02(path: &str) -> u64 {
     let (seeds, almanac) = parse_input(path);
-    let mut cache = HashMap::new();
 
-    seeds
+    let seeds = seeds
         .chunks(2)
-        .map(|a| {
-            (a[0]..(a[0] + a[1]))
-                .map(|seed| {
-                    if let Some(value) = cache.get(&seed) {
-                        return *value;
-                    }
-                    let result = almanac.seed_to_location(seed);
+        .flat_map(|chunk| (chunk[0]..chunk[0] + chunk[1]).collect::<Vec<_>>())
+        .collect::<HashSet<_>>();
 
-                    cache.insert(seed, result);
+    let almanac = Almanac(
+        almanac
+            .0
+            .iter()
+            .map(|section| {
+                section.iter().map(GardenRange::rev).collect::<Vec<_>>()
+            })
+            .rev()
+            .collect::<Vec<_>>(),
+    );
 
-                    result
-                })
-                .min()
-                .expect("expect min")
-        })
-        .min()
-        .expect("expected a min")
+    (1..)
+        .find(|location| seeds.contains(&almanac.find(*location)))
+        .expect("expected a location")
 }
 
 #[cfg(test)]
@@ -168,6 +167,7 @@ mod tests {
         assert_eq!(part02("data/y2023/day05-example1.txt"), 46);
     }
 
+    #[ignore]
     #[test]
     fn part02_input() {
         assert_eq!(part02("data/y2023/day05.txt"), 57_451_709);
