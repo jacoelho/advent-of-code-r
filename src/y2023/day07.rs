@@ -60,25 +60,24 @@ impl Hand {
     fn value(&self) -> Value {
         let count = self.0.iter().counts();
 
-        match count.keys().count() {
-            1 => Value::FiveOfAKind,
-            2 => {
-                if count.values().any(|count| *count == 4) {
-                    Value::FourOfAKind
-                } else {
-                    Value::FullHouse
-                }
-            }
+        match *count.values().max().unwrap_or(&0) {
+            5 => Value::FiveOfAKind,
+            4 => Value::FourOfAKind,
             3 => {
-                if count.values().filter(|&v| *v == 2).count() == 2 {
-                    Value::TwoPair
+                if count.values().any(|&v| v == 2) {
+                    Value::FullHouse
                 } else {
                     Value::ThreeOfAKind
                 }
             }
-            4 => Value::OnePair,
-            5 => Value::HighCard,
-            _ => panic!("unexpected card count"),
+            2 => {
+                if count.values().filter(|&&v| v == 2).count() == 2 {
+                    Value::TwoPair
+                } else {
+                    Value::OnePair
+                }
+            }
+            _ => Value::HighCard,
         }
     }
 
