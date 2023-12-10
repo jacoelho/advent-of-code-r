@@ -1,3 +1,4 @@
+use std::collections::VecDeque;
 use std::{
     collections::{BinaryHeap, HashSet},
     hash::Hash,
@@ -61,4 +62,28 @@ where
     }
 
     None
+}
+
+pub fn bfs<T, N>(start: T, neighbours: N) -> Vec<T>
+where
+    T: Eq + Hash + Copy,
+    N: Fn(T) -> Vec<T>,
+{
+    let mut frontier = VecDeque::new();
+    let mut visited = HashSet::new();
+    let mut result = Vec::new();
+
+    visited.insert(start);
+    frontier.push_back(start);
+
+    while let Some(node) = frontier.pop_front() {
+        result.push(node);
+
+        for el in neighbours(node).into_iter().filter(|el| visited.insert(*el))
+        {
+            frontier.push_back(el);
+        }
+    }
+
+    result
 }

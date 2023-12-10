@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::fmt;
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
@@ -87,5 +88,24 @@ impl std::ops::Sub for Position2D {
 
     fn sub(self, other: Self) -> Self {
         Self { x: self.x - other.x, y: self.y - other.y }
+    }
+}
+
+pub fn print<V>(grid: &HashMap<Position2D, V>, default: &V)
+where
+    V: fmt::Display,
+{
+    let (x_min, x_max, y_min, y_max) = grid.keys().fold(
+        (i32::MAX, i32::MIN, i32::MAX, i32::MIN),
+        |acc, p| {
+            (acc.0.min(p.x), acc.1.max(p.x), acc.2.min(p.y), acc.3.max(p.y))
+        },
+    );
+
+    for y in y_min..=y_max {
+        for x in x_min..=x_max {
+            print!("{}", grid.get(&Position2D::new(x, y)).unwrap_or(default));
+        }
+        println!();
     }
 }
