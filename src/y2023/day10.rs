@@ -13,9 +13,6 @@ enum Pipe {
     UpperRight,
     LowerLeft,
     LowerRight,
-    Empty,
-    Enclosed,
-    Shape,
 }
 
 impl TryFrom<char> for Pipe {
@@ -30,25 +27,7 @@ impl TryFrom<char> for Pipe {
             '7' => Ok(Self::UpperRight),
             'F' => Ok(Self::UpperLeft),
             'S' => Ok(Self::Start),
-            '.' => Ok(Self::Empty),
             _ => Err("unexpected pipe"),
-        }
-    }
-}
-
-impl std::fmt::Display for Pipe {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Start => write!(f, "S"),
-            Self::Vertical => write!(f, "|"),
-            Self::Horizontal => write!(f, "-"),
-            Self::UpperLeft => write!(f, "F"),
-            Self::UpperRight => write!(f, "7"),
-            Self::LowerLeft => write!(f, "L"),
-            Self::LowerRight => write!(f, "J"),
-            Self::Empty => write!(f, "."),
-            Self::Enclosed => write!(f, "I"),
-            Self::Shape => write!(f, "Z"),
         }
     }
 }
@@ -82,7 +61,6 @@ fn neighbours(
         Pipe::LowerRight => {
             vec![Position2D::new(-1, 0), Position2D::new(0, -1)]
         }
-        Pipe::Empty | Pipe::Enclosed | Pipe::Shape => vec![],
     };
 
     neighbours
@@ -90,10 +68,7 @@ fn neighbours(
         .filter_map(|pos| {
             let current = *pos + tile.0;
 
-            match grid.get(&current) {
-                Some(pipe) if *pipe != Pipe::Empty => Some((current, *pipe)),
-                _ => None,
-            }
+            grid.get(&current).map(|pipe| (current, *pipe))
         })
         .collect::<Vec<_>>()
 }
@@ -137,7 +112,7 @@ fn part01(path: &str) -> usize {
 }
 
 fn part02(path: &str) -> usize {
-    let mut grid = parse_input(path);
+    let grid = parse_input(path);
 
     let start_position = start_position(&grid);
 
@@ -148,8 +123,8 @@ fn part02(path: &str) -> usize {
         .into_iter()
         .collect::<HashMap<Position2D, Pipe>>();
 
-    let x_max = shape.keys().map(|position| position.x).max().unwrap();
-    let y_max = shape.keys().map(|position| position.y).max().unwrap();
+    let x_max = shape.keys().map(|position| position.x).max().unwrap_or(0);
+    let y_max = shape.keys().map(|position| position.y).max().unwrap_or(0);
 
     let mut count = 0;
 
