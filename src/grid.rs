@@ -109,3 +109,8 @@ where
         println!();
     }
 }
+
+pub fn dimensions<V>(grid: &HashMap<Position2D, V>) -> (i32, i32) {
+    grid.keys()
+        .fold((i32::MIN, i32::MIN), |acc, p| (acc.0.max(p.x), acc.1.max(p.y)))
+}
