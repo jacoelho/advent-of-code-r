@@ -92,7 +92,7 @@ fn parse_input(path: &str) -> Image {
     Image { map, x_max, y_max }
 }
 
-fn generate_pairs(input: &[Position2D]) -> Vec<(Position2D, Position2D)> {
+fn generate_pairs<T: Copy>(input: &[T]) -> Vec<(T, T)> {
     input
         .iter()
         .enumerate()
