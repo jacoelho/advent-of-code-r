@@ -1,5 +1,4 @@
-use itertools::Itertools;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 use std::str::FromStr;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -42,13 +41,6 @@ impl GardenRange {
 
 #[derive(Debug, PartialEq)]
 struct Almanac(Vec<Vec<GardenRange>>);
-// seed_to_soil: Vec<GardenRange>,
-// soil_to_fertilizer: Vec<GardenRange>,
-// fertilizer_to_water: Vec<GardenRange>,
-// water_to_light: Vec<GardenRange>,
-// light_to_temperature: Vec<GardenRange>,
-// temperature_to_humidity: Vec<GardenRange>,
-// humidity_to_location: Vec<GardenRange>,
 
 impl FromStr for Almanac {
     type Err = &'static str;
@@ -69,24 +61,11 @@ impl FromStr for Almanac {
             return Err("invalid almanac");
         }
 
-        // Ok(Almanac {
-        //     seed_to_soil: sections[0].clone(),
-        //     soil_to_fertilizer: sections[1].clone(),
-        //     fertilizer_to_water: sections[2].clone(),
-        //     water_to_light: sections[3].clone(),
-        //     light_to_temperature: sections[4].clone(),
-        //     temperature_to_humidity: sections[5].clone(),
-        //     humidity_to_location: sections[6].clone(),
-        // })
         Ok(Almanac(sections))
     }
 }
 
 impl Almanac {
-    fn translate(table: &[GardenRange], pos: u64) -> u64 {
-        table.iter().find_map(|t| t.translate(pos)).unwrap_or(pos)
-    }
-
     fn find(&self, pos: u64) -> u64 {
         self.0.iter().fold(pos, |acc, t| {
             t.iter().find_map(|range| range.translate(acc)).unwrap_or(acc)

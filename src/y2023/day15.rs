@@ -1,4 +1,4 @@
-use std::collections::{HashMap, VecDeque};
+use std::collections::VecDeque;
 use std::str::FromStr;
 
 fn hash(s: &str) -> u32 {

@@ -1,7 +1,7 @@
+use std::collections::HashMap;
+
 use crate::grid;
 use crate::grid::Position2D;
-use std::collections::{HashMap, HashSet};
-use std::os::unix::raw::uid_t;
 
 #[derive(Debug, Eq, PartialEq)]
 enum Universe {

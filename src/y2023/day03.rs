@@ -4,9 +4,7 @@ use std::collections::HashSet;
 #[derive(PartialEq, Debug)]
 enum Schematic {
     Symbol(char),
-    Digit(u32),
     Gear,
-    Empty,
 }
 
 fn parse_input(

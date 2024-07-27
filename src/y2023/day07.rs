@@ -1,5 +1,4 @@
 use itertools::Itertools;
-use std::collections::HashMap;
 
 #[derive(Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Copy, Clone)]
 enum Card {

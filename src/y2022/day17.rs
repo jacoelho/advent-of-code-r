@@ -192,9 +192,9 @@ fn part02(path: &str) -> i64 {
 
         if let Some(entry) = seen.get(&state) {
             let height_per_loop = chamber.height - entry.0;
-            let drops_per_loop = drop_count - (entry.1 as i64);
+            let drops_per_loop = drop_count - (entry.1);
 
-            let remaining_drops = 1000000000000_i64 - (entry.1 as i64);
+            let remaining_drops = 1000000000000_i64 - (entry.1);
 
             let loops = remaining_drops / drops_per_loop;
             let remaining_drops = remaining_drops % drops_per_loop;
@@ -203,7 +203,7 @@ fn part02(path: &str) -> i64 {
                 chamber.drop_piece();
             }
 
-            let height_loops = entry.0 + height_per_loop * (loops as i64);
+            let height_loops = entry.0 + height_per_loop * (loops);
 
             return height_loops + chamber.height - height;
         } else {

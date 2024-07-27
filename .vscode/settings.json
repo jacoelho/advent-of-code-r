@@ -6,7 +6,7 @@
         "**/target/**": true,
         "**/.stack-work/**": true
     },
-    "rust-analyzer.checkOnSave.command": "clippy",
     "rust-analyzer.imports.granularity.group": "module",
-    "rust-analyzer.imports.prefix": "crate"
+    "rust-analyzer.imports.prefix": "crate",
+    "rust-analyzer.checkOnSave": true
 }

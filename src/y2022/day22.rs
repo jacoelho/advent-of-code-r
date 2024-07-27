@@ -86,7 +86,7 @@ fn parse_input(path: &str) -> (Vec<Vec<Tile>>, Vec<Instruction>) {
 
     let instructions = instructions
         .chars()
-        .group_by(|c| c.is_ascii_digit())
+        .chunk_by(|c| c.is_ascii_digit())
         .into_iter()
         .map(|(_, v)| -> Instruction {
             let s = v.collect::<String>();
