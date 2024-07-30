@@ -49,7 +49,7 @@ fn total_load(grid: &[Vec<Entities>]) -> usize {
 fn tilt_row_right(r: &[Entities]) -> Vec<Entities> {
     r.iter()
         .copied()
-        .group_by(|&c| c == Entities::SquareRock)
+        .chunk_by(|&c| c == Entities::SquareRock)
         .into_iter()
         .flat_map(|(_, group)| group.sorted())
         .collect()
